@@ -4,6 +4,7 @@ import time
 from servers import service
 from configs import services_config
 
+
 class SleepCpuService(service.Service):
     def __init__(self):
         super().__init__()

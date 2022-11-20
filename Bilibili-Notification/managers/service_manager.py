@@ -1,22 +1,27 @@
 #!/usr/bin/python
+
 import queue
 import threading
 import time
 from patterns import singleton
+
+
 def update_server(service):
     if not service:
         return
     service.update()
     # time.sleep(0.001) #减少CPU占用
 
+
 def poll_service(service):
     if not service:
         return
-        
+
     while (True):
         if service._is_async_stop:
             break
         update_server(service)
+
 
 class ServiceManager(singleton.Singleton):
     __sync_services = {}
@@ -35,7 +40,7 @@ class ServiceManager(singleton.Singleton):
             service_in_dict = self.__async_services.get(services_name)
             if not service_in_dict:
                 self.__async_services_start.put(service)
-        else :
+        else:
             service_in_dict = self.__sync_services.get(services_name)
             if not service_in_dict:
                 service._onStart()
@@ -54,32 +59,33 @@ class ServiceManager(singleton.Singleton):
             if service_in_dict:
                 service._onExit()
                 del self.__sync_services[services_name]
-                
+
     def execute(self):
-        #开始异步服务的
+        # 开始异步服务的
         while (True):
             while (not self.__async_services_start.empty()):
                 service = self.__async_services_start.get()
                 services_name = type(service).__name__
                 service_in_dict = self.__async_services.get(services_name)
-                if not service_in_dict: 
+                if not service_in_dict:
                     service._onStart()
                     service._is_async_stop = False
-                    thread = threading.Thread(target=poll_service,args=[service])
+                    thread = threading.Thread(target=poll_service, args=[service])
                     self.__async_services[services_name] = thread
                     thread.start()
-                    
+
             while (not self.__async_services_stop.empty()):
                 service = self.__async_services_stop.get()
                 services_name = type(service).__name__
                 service_in_dict = self.__async_services.get(services_name)
-                if service_in_dict: 
+                if service_in_dict:
                     service._onExit()
                     service._is_async_stop = True
                     del self.__async_services[services_name]
-            
-            #同步服务轮询
-            for _,v in self.__sync_services.items():
+
+            # 同步服务轮询
+            for _, v in self.__sync_services.items():
                 update_server(v)
+
 
 service_manager = ServiceManager()
