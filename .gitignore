@@ -8,3 +8,5 @@
 
 __pycache__
 dingding_config.py
+discord_config.py
+services_config.py
