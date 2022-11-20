@@ -11,6 +11,7 @@ HANDLE_DYNAMIC_TYPES = [2,4,6,8,64]
 
 # 扫描间隔秒数，不建议设置太频繁
 INTERVALS_SECOND = 60
+INTERVALS_RAND_MAX = 30
 # 扫描起止时间，24小时制(目前不支持跨日期)，例：07:00、23:59
 BEGIN_TIME = "07:00"
 END_TIME = "23:59"
