@@ -89,7 +89,8 @@ class NotificationPollService(service.Service):
             return False
 
         if content['code'] != 0:
-            logger.error('【查询动态状态】请求返回数据code错误：{code}'.format(code=content['code']))
+            logger.error('【查询动态状态】[{uid}]请求返回数据code错误：{code}, response content=[{content}]'
+                         .format(uid=uid, code=content['code'], content=content))
             return False
         else:
             data = content['data']
@@ -101,7 +102,8 @@ class NotificationPollService(service.Service):
             try:
                 _ = item['desc']['user_profile']['info']['uname']
             except KeyError:
-                logger.error('【查询动态状态】【{uid}】获取不到uname'.format(uid=uid))
+                logger.error('【查询动态状态】【{uid}】获取不到uname, response content=[{content}]'
+                             .format(uid=uid, content=content))
                 return False
 
         return True
@@ -176,12 +178,14 @@ class NotificationPollService(service.Service):
             return False
 
         if content['code'] != 0:
-            logger.error('【查询直播状态】请求返回数据code错误：{code}'.format(code=content['code']))
+            logger.error('【查询直播状态】[{uid}]请求返回数据code错误：{code}, response content=[{content}]'
+                         .format(uid=uid, code=content['code'], content=content))
             return False
         try:
             _ = content['data']['live_room']['liveStatus']
         except (KeyError, TypeError):
-            logger.error('【查询直播状态】【{uid}】获取不到liveStatus'.format(uid=uid))
+            logger.error('【查询直播状态】【{uid}】获取不到liveStatus, response content=[{content}]'
+                         .format(uid=uid, content=content))
             return False
 
         return True
